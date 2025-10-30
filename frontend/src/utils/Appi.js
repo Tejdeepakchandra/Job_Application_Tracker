@@ -1,15 +1,11 @@
-// src/utils/Appi.js
 import axios from 'axios';
 
 const Appi = axios.create({
   baseURL: 'http://localhost:5000/api',
   timeout: 10000,
-  headers: {
-    'Content-Type': 'application/json',
-  },
+  
 });
 
-// ✅ Custom token setter for this specific instance
 const setAppiAuthToken = (token) => {
   if (token) {
     Appi.defaults.headers.common['x-auth-token'] = token;

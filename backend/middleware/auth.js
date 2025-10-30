@@ -1,4 +1,3 @@
-// middleware/auth.js
 
 const jwt = require('jsonwebtoken');
 
@@ -13,7 +12,6 @@ const auth = (req, res, next) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     console.log("✅ Decoded token:", decoded);
 
-    // Accept both formats
     if (decoded.user && decoded.user.id) {
       req.user = decoded.user;
     } else if (decoded.userId) {

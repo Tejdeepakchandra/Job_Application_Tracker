@@ -9,15 +9,15 @@ const theme = createTheme({
  palette: {
     mode: 'dark',
     primary: {
-      main: '#00dbde', // Teal accent for primary actions
+      main: '#00dbde', 
       contrastText: '#000',
     },
     secondary: {
-      main: '#fc00ff', // Purple accent for secondary actions
+      main: '#fc00ff', 
     },
     background: {
-      default: 'transparent', // Allows gradient to show through
-      paper: 'rgba(22, 33, 62, 0.8)', // Semi-transparent dark blue
+      default: 'transparent', 
+      paper: 'rgba(22, 33, 62, 0.8)', 
     },
     text: {
       primary: '#ffffff',

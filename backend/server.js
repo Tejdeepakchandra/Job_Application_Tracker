@@ -20,12 +20,10 @@ app.use(express.json({ extended: false }));
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Define Routes
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/jobs', require('./routes/jobRoutes'));
 
 if (process.env.NODE_ENV === 'production') {
-    // Set static folder
     app.use(express.static('frontend/build'));
 
     app.get('*', (req, res) => {

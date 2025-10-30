@@ -4,7 +4,6 @@ const fs = require('fs');
 const path = require('path');
 const nodemailer = require('nodemailer');
 
-// Configure nodemailer transporter
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -33,45 +32,43 @@ exports.getJobs = async (req, res) => {
 
 
 exports.addJob = async (req, res) => {
-    try {
-        const { company, role, status, notes, contact, source, interviewDate } = req.body;
+  try {
+    const { company, role, status, notes, contact, source, interviewDate } = req.body;
 
-        const newJob = new Job({
-            user: req.user.id,
-            company,
-            role,
-            status,
-            notes,
-            contact,
-            source,
-            interviewDate: status === 'interview' ? new Date(interviewDate) : null,
-            resume: req.file ? req.file.path : null,
-        });
+    const resumePath = req.file ? req.file.path.replace(/\\/g, "/") : null; 
 
-        const job = await newJob.save();
+    const newJob = new Job({
+      user: req.user.id,
+      company,
+      role,
+      status,
+      notes,
+      contact,
+      source,
+      interviewDate: status === 'interview' ? new Date(interviewDate) : null,
+      resume: resumePath,
+    });
 
-        // Send email notification
-        const user = await User.findById(req.user.id);
-        if (user && user.email) {
-            await transporter.sendMail({
-                from: process.env.EMAIL_USER,
-                to: user.email,
-                subject: 'New Job Application Added',
-                text: `You added a job application for ${company} - ${role} with status ${status}.`,
-            });
-        }
+    const job = await newJob.save();
 
-        res.status(201).json({
-            success: true,
-            job
-        });
-    } catch (err) {
-        console.error('Error adding job:', err.message);
-        res.status(500).json({
-            success: false,
-            msg: 'Server error while adding job'
-        });
+    const user = await User.findById(req.user.id);
+    if (user && user.email) {
+      await transporter.sendMail({
+        from: process.env.EMAIL_USER,
+        to: user.email,
+        subject: 'New Job Application Added',
+        text: `You added a job application for ${company} - ${role} with status ${status}.`,
+      });
     }
+
+    res.status(201).json({ success: true, job });
+  } catch (err) {
+    console.error('❌ Error adding job:', err.message);
+    res.status(500).json({
+      success: false,
+      msg: 'Server error while adding job',
+    });
+  }
 };
 
 
@@ -87,7 +84,6 @@ exports.updateJob = async (req, res) => {
             });
         }
 
-        // Check user ownership
         if (job.user.toString() !== req.user.id) {
             return res.status(401).json({
                 success: false,
@@ -97,7 +93,6 @@ exports.updateJob = async (req, res) => {
 
         const oldStatus = job.status;
 
-        // If a new resume file is uploaded, update the path. Otherwise, keep the existing one.
         const resumePath = req.file ? req.file.path : job.resume;
 
         job = await Job.findByIdAndUpdate(
@@ -116,7 +111,6 @@ exports.updateJob = async (req, res) => {
             }
         );
 
-        // Send email if status changed
         if (oldStatus !== status) {
             const user = await User.findById(req.user.id);
             if (user && user.email) {
@@ -154,7 +148,6 @@ exports.deleteJob = async (req, res) => {
             });
         }
 
-        // Check user ownership
         if (job.user.toString() !== req.user.id) {
             return res.status(401).json({
                 success: false,
@@ -162,7 +155,6 @@ exports.deleteJob = async (req, res) => {
             });
         }
 
-        // Delete resume file if exists
         if (job.resume) {
             const filePath = path.join(__dirname, '..', job.resume);
             fs.unlink(filePath, (err) => {
@@ -170,7 +162,7 @@ exports.deleteJob = async (req, res) => {
             });
         }
 
-        await Job.findByIdAndDelete(req.params.id); // Use findByIdAndDelete
+        await Job.findByIdAndDelete(req.params.id); 
 
         res.json({
             success: true,
@@ -231,7 +223,6 @@ exports.downloadResume = async (req, res) => {
 
         const filePath = path.join(__dirname, '..', job.resume);
 
-        // Check if file exists before sending
         if (!fs.existsSync(filePath)) {
             return res.status(404).json({ success: false, msg: 'Resume file not found on server.' });
         }
@@ -240,7 +231,7 @@ exports.downloadResume = async (req, res) => {
         res.download(filePath, fileName, (err) => {
             if (err) {
                 console.error('Error during resume download:', err);
-                if (!res.headersSent) { // Prevent setting headers after they've been sent
+                if (!res.headersSent) { 
                     res.status(500).json({ success: false, msg: 'Error downloading resume file.' });
                 }
             }
