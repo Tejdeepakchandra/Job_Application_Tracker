@@ -21,7 +21,6 @@ const statusOptions = [
 const EditJob = ({ job, onJobUpdated, onJobDeleted, onCancel }) => {
   const { setAlert } = useContext(AlertContext);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [currentResume, setCurrentResume] = useState(null);
 
   const formik = useFormik({
     initialValues: {
@@ -81,8 +80,8 @@ const EditJob = ({ job, onJobUpdated, onJobDeleted, onCancel }) => {
         source: job.source || '',
         resume: null,
       });
-      setCurrentResume(job.resume);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [job]);
 
   const handleDelete = useCallback(async () => {
