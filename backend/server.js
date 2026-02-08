@@ -12,8 +12,14 @@ connectDB();
 
 const app = express();
 
+// CORS configuration with frontend port from .env
+const corsOptions = {
+  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  credentials: true,
+  optionsSuccessStatus: 200
+};
 
-app.use(cors());
+app.use(cors(corsOptions));
 
 
 app.use(express.json({ extended: false }));

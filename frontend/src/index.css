@@ -1,4 +1,4 @@
-/* frontend/src/index.css */
+
 body {
   margin: 0;
   -webkit-font-smoothing: antialiased;
@@ -6,7 +6,7 @@ body {
   background-color: #222831;
 }
 
-/* Scrollbar styling */
+
 ::-webkit-scrollbar {
   width: 8px;
 }
@@ -16,12 +16,12 @@ body {
 ::-webkit-scrollbar-thumb {
   background: #6D9886;
   border-radius: 4px;
-}
+} 
 ::-webkit-scrollbar-thumb:hover {
   background: #8FB9A8;
 }
 
-/* Animation for page transitions */
+
 .fade-enter {
   opacity: 0;
 }
